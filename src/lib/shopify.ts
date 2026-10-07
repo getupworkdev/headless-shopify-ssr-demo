@@ -31,8 +31,3 @@ export async function storefront<T>(query: string, variables: Record<string, unk
   if (!json.data) throw new ShopifyError('Storefront API returned no data')
   return json.data
 }
-
-export function siteUrl(path = '/') {
-  const base = (process.env.SITE_URL || 'http://localhost:3000').replace(/\/$/, '')
-  return `${base}${path}`
-}

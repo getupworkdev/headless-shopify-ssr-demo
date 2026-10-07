@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { getProduct } from '~/lib/server'
-import { siteUrl } from '~/lib/shopify'
+import { absolute, originFrom } from '~/lib/site'
 import { formatMoney, numericId, selectVariant, shopifyImage, variantForOption } from '~/lib/catalog'
 import type { Product, Variant } from '~/lib/types'
 
@@ -16,7 +16,8 @@ export const Route = createFileRoute('/products/$handle')({
     const selected = selectVariant(product.variants, { variant: deps.variant })
     return { product, selectedId: selected?.id }
   },
-  head: ({ loaderData, params }) => {
+  head: ({ loaderData, params, matches }) => {
+    const siteUrl = (path: string) => absolute(originFrom(matches), path)
     if (!loaderData) return {}
     const { product } = loaderData
     const url = siteUrl(`/products/${params.handle}`)
@@ -34,13 +35,13 @@ export const Route = createFileRoute('/products/$handle')({
         ...(image ? [{ property: 'og:image', content: shopifyImage(image, 1200) }] : []),
       ],
       links: [{ rel: 'canonical', href: url }],
-      scripts: [{ type: 'application/ld+json', children: JSON.stringify(productJsonLd(product, url)) }],
+      scripts: [{ type: 'application/ld+json', children: JSON.stringify(productJsonLd(product, url, siteUrl)) }],
     }
   },
   component: ProductPage,
 })
 
-function productJsonLd(product: Product, url: string) {
+function productJsonLd(product: Product, url: string, siteUrl: (path: string) => string) {
   const crumb = product.collections[0]
   return {
     '@context': 'https://schema.org',

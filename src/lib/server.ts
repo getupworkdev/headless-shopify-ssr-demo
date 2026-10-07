@@ -1,7 +1,7 @@
 // Server functions: these run only on the server. Route loaders call them during SSR,
 // so every page's HTML already contains the Shopify data.
 import { createServerFn } from '@tanstack/react-start'
-import { getCookie } from '@tanstack/react-start/server'
+import { getCookie, getRequestUrl } from '@tanstack/react-start/server'
 import { notFound } from '@tanstack/react-router'
 import { storefront } from './shopify'
 import { CART_QUERY, COLLECTION_QUERY, COLLECTIONS_QUERY, HOME_QUERY, PRODUCT_QUERY } from './queries'
@@ -68,4 +68,11 @@ export const getCart = createServerFn({ method: 'GET' }).handler(async (): Promi
   if (!id) return null
   const res = await storefront<{ cart: RawCart | null }>(CART_QUERY, { id })
   return res.cart ? flattenCart(res.cart) : null
+})
+
+// Absolute origin for canonical links and structured data: SITE_URL if set, otherwise
+// the URL the request arrived on (works on any host without configuration).
+export const getOrigin = createServerFn({ method: 'GET' }).handler(async () => {
+  const fromEnv = process.env.SITE_URL?.trim().replace(/\/$/, '')
+  return fromEnv || getRequestUrl({ xForwardedHost: true, xForwardedProto: true }).origin
 })

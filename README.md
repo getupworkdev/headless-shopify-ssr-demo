@@ -9,6 +9,10 @@ to Shopify's own checkout, so the store's payment setup applies unchanged.
 It runs against Shopify's public demo catalogue (mock.shop) out of the box, and against
 any real store by setting two environment variables.
 
+**Live demo:** https://rococo-fairy-66076d.netlify.app
+(try a [product page with a variant selected](https://rococo-fairy-66076d.netlify.app/products/men-crewneck?variant=43695848128534)
+or a [filtered collection](https://rococo-fairy-66076d.netlify.app/collections/men?opt.Color=Green&sort=price-asc), then view the page source).
+
 ![Product page rendered with JavaScript disabled](docs/screenshots/product-javascript-disabled.png)
 
 ## What is in it
@@ -85,8 +89,8 @@ npm run build && npm run preview
 ### Deploy
 
 Netlify is configured (`netlify.toml` plus the TanStack Start Netlify plugin): import the
-repository in Netlify and deploy, no settings needed. Set `SITE_URL` to the deployed URL so
-canonical links, the sitemap and JSON-LD use it.
+repository in Netlify and deploy, no settings needed. Canonical links, the sitemap and JSON-LD use the
+address the request arrived on, or `SITE_URL` if set.
 
 ### Point it at a real store
 
@@ -95,7 +99,7 @@ Copy `.env.example` to `.env`:
 ```
 SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
 SHOPIFY_STOREFRONT_TOKEN=<public Storefront API token>
-SITE_URL=https://www.your-domain.com
+SITE_URL=https://www.your-domain.com   # optional; defaults to the request's origin
 ```
 
 The Storefront token is the public one meant for storefronts; it is only used on the

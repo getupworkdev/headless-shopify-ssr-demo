@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { getCollection } from '~/lib/server'
-import { siteUrl } from '~/lib/shopify'
+import { absolute, originFrom } from '~/lib/site'
 import { ProductCard } from '~/components/ProductCard'
 import type { CollectionFilters } from '~/lib/types'
 
@@ -14,7 +14,8 @@ export const Route = createFileRoute('/collections/$handle')({
     ),
   loaderDeps: ({ search }) => ({ search }),
   loader: ({ params, deps }) => getCollection({ data: { handle: params.handle, search: deps.search } }),
-  head: ({ loaderData, params }) => {
+  head: ({ loaderData, params, matches }) => {
+    const siteUrl = (path: string) => absolute(originFrom(matches), path)
     if (!loaderData) return {}
     const { collection, products } = loaderData
     const title = collection.seo.title || `${collection.title} | Northwind Supply`

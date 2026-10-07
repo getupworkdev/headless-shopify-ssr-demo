@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { storefront, siteUrl } from '~/lib/shopify'
+import { storefront } from '~/lib/shopify'
 import { SITEMAP_QUERY } from '~/lib/queries'
 
 type Node = { handle: string; updatedAt: string }
@@ -7,7 +7,9 @@ type Node = { handle: string; updatedAt: string }
 export const Route = createFileRoute('/sitemap.xml')({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
+        const origin = (process.env.SITE_URL?.trim() || new URL(request.url).origin).replace(/\/$/, '')
+        const siteUrl = (path: string) => `${origin}${path}`
         const data = await storefront<{ products: { nodes: Node[] }; collections: { nodes: Node[] } }>(SITEMAP_QUERY)
         const url = (loc: string, lastmod?: string) =>
           `<url><loc>${siteUrl(loc)}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}</url>`

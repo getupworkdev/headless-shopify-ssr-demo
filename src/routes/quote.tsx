@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { siteUrl } from '~/lib/shopify'
+import { absolute, originFrom } from '~/lib/site'
 import { PROPERTY_TYPES, QUOTE_ERROR_TEXT } from '~/lib/quote'
 
 type Search = Partial<Record<'sent' | 'error' | 'name' | 'contact' | 'postcode' | 'property' | 'message', string | number>>
@@ -7,13 +7,16 @@ type Search = Partial<Record<'sent' | 'error' | 'name' | 'contact' | 'postcode' 
 export const Route = createFileRoute('/quote')({
   validateSearch: (s: Record<string, unknown>): Search =>
     Object.fromEntries(Object.entries(s).filter((e) => typeof e[1] === 'string' || typeof e[1] === 'number')) as Search,
-  head: () => ({
+  head: ({ matches }) => {
+    const siteUrl = (path: string) => absolute(originFrom(matches), path)
+    return {
     meta: [
       { title: 'Request a quote | Northwind Supply' },
       { name: 'description', content: 'Tell us about your property and we will send a tailored quote.' },
     ],
     links: [{ rel: 'canonical', href: siteUrl('/quote') }],
-  }),
+  }
+  },
   component: QuotePage,
 })
 

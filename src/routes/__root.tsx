@@ -2,14 +2,14 @@
 import type { ReactNode } from 'react'
 import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
 import appCss from '../styles.css?url'
-import { getCart, getNav } from '~/lib/server'
+import { getCart, getNav, getOrigin } from '~/lib/server'
 import { Header } from '~/components/Header'
 import { Footer } from '~/components/Footer'
 
 export const Route = createRootRoute({
   loader: async () => {
-    const [nav, cart] = await Promise.all([getNav(), getCart()])
-    return { nav, cartCount: cart?.totalQuantity ?? 0 }
+    const [nav, cart, origin] = await Promise.all([getNav(), getCart(), getOrigin()])
+    return { nav, cartCount: cart?.totalQuantity ?? 0, origin }
   },
   head: () => ({
     meta: [

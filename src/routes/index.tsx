@@ -1,12 +1,14 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { getHome } from '~/lib/server'
-import { siteUrl } from '~/lib/shopify'
+import { absolute, originFrom } from '~/lib/site'
 import { ProductCard } from '~/components/ProductCard'
 import { shopifyImage } from '~/lib/catalog'
 
 export const Route = createFileRoute('/')({
   loader: () => getHome(),
-  head: () => ({
+  head: ({ matches }) => {
+    const siteUrl = (path: string) => absolute(originFrom(matches), path)
+    return {
     meta: [
       { title: 'Northwind Supply | Headless Shopify demo' },
       { name: 'description', content: 'A headless Shopify storefront rendered on the server with TanStack Start.' },
@@ -20,7 +22,8 @@ export const Route = createFileRoute('/')({
         children: JSON.stringify({ '@context': 'https://schema.org', '@type': 'Organization', name: 'Northwind Supply', url: siteUrl('/') }),
       },
     ],
-  }),
+  }
+  },
   component: Home,
 })
 
