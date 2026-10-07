@@ -82,6 +82,12 @@ npm run typecheck
 npm run build && npm run preview
 ```
 
+### Deploy
+
+Netlify is configured (`netlify.toml` plus the TanStack Start Netlify plugin): import the
+repository in Netlify and deploy, no settings needed. Set `SITE_URL` to the deployed URL so
+canonical links, the sitemap and JSON-LD use it.
+
 ### Point it at a real store
 
 Copy `.env.example` to `.env`:
